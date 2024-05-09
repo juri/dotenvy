@@ -143,7 +143,7 @@ final class ErrorFormatTests: XCTestCase {
         }
     }
 
-    func testUnexpectedEOF() throws {
+    func testUnexpectedEnd() throws {
         let source = #"""
         POP=BANG
         FOO1=Bar
