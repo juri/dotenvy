@@ -169,4 +169,14 @@ final class DotEnvyTests: XCTestCase {
         """#)
         XCTAssertEqual(values, ["K1": "v1", "K2": "v1v2", "K3": "${K1}v3", "K4": "v4"])
     }
+
+    func testVariableReplacementRecursive() throws {
+        let values = try parse(string: #"""
+        K1=v1
+        K2=${K1}v2
+        K3=${K2}v3
+        K4='v4'
+        """#)
+        XCTAssertEqual(values, ["K1": "v1", "K2": "v1v2", "K3": "v1v2v3", "K4": "v4"])
+    }
 }
