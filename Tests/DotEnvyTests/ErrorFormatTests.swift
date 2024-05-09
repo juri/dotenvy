@@ -167,4 +167,25 @@ final class ErrorFormatTests: XCTestCase {
             )
         }
     }
+
+    func testUnknownKey() throws {
+        let source = #"""
+        FLARP=${UNKNOWN}
+        """#
+        do {
+            _ = try parse(string: source)
+            XCTFail()
+        } catch let error as ParseErrorWithLocation {
+            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            XCTAssertEqual(
+                formatted,
+                #"""
+                   1: FLARP=${UNKNOWN}
+                                      ^
+
+                Error on line 1: Unknown key: "UNKNOWN"
+                """#
+            )
+        }
+    }
 }
