@@ -1,5 +1,8 @@
 import Foundation
 
+/// Parse dotenv formatted string.
+///
+/// - Throws: `ParseErrorWithLocation`
 public func parse(string: String) throws -> [String: String] {
     var sub = string[...]
     do {
@@ -10,6 +13,12 @@ public func parse(string: String) throws -> [String: String] {
     }
 }
 
+/// Parse dotenv formatted substring.
+///
+/// `substring.startIndex` is moved while the parsing happens. If the method throws,
+/// `startIndex` is where the error occurred.
+///
+/// - Throws: `ParseError`
 public func parse(substring: inout Substring) throws -> [String: String] {
     var values = [String: String]()
 
@@ -31,6 +40,7 @@ public func parse(substring: inout Substring) throws -> [String: String] {
     return values
 }
 
+/// Format `error` that occurred on `errorLocation` when parsing `source`.
 public func formatError(source: String, error: ParseError, errorLocation: String.Index) -> String {
     var lines = [Substring]()
     var lineCounter = 1
