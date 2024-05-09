@@ -141,10 +141,10 @@ extension ParseError: CustomStringConvertible {
     public var description: String {
         switch self {
         case .invalidEscapeSequence: "Invalid escape sequence"
-        case let .invalidKeyStart(start): #"Invalid start for a key "\#(start)""#
+        case let .invalidKeyStart(start): #"Invalid start for a key: "\#(start)""#
         case .missingEquals: "Missing equals sign"
         case .unexpectedEOF: "Unexpected end of file"
-        case let .unknownKey(key): #"Unknown key "\#(key)""#
+        case let .unknownKey(key): #"Unknown key: "\#(key)""#
         case .unterminatedVariable: "Unterminated variable"
         }
     }
