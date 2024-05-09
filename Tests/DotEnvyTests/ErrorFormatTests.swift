@@ -168,7 +168,7 @@ final class ErrorFormatTests: XCTestCase {
         }
     }
 
-    func testUnknownKey() throws {
+    func testUnknownVariable() throws {
         let source = #"""
         FLARP=${UNKNOWN}
         """#
@@ -183,7 +183,7 @@ final class ErrorFormatTests: XCTestCase {
                    1: FLARP=${UNKNOWN}
                                       ^
 
-                Error on line 1: Unknown key: "UNKNOWN"
+                Error on line 1: Unknown variable: "UNKNOWN"
                 """#
             )
         }

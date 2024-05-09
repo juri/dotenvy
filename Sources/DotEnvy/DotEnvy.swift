@@ -162,7 +162,7 @@ public enum ParseError: Error {
     case invalidKeyStart(Character)
     case missingEquals
     case unexpectedEnd
-    case unknownKey(String)
+    case unknownVariable(String)
     case unterminatedVariable
 }
 
@@ -173,7 +173,7 @@ extension ParseError: CustomStringConvertible {
         case let .invalidKeyStart(start): #"Invalid start for a key: "\#(start)""#
         case .missingEquals: "Missing equals sign"
         case .unexpectedEnd: "Unexpected end of data"
-        case let .unknownKey(key): #"Unknown key: "\#(key)""#
+        case let .unknownVariable(key): #"Unknown variable: "\#(key)""#
         case .unterminatedVariable: "Unterminated variable"
         }
     }
@@ -255,7 +255,7 @@ func parseQuoted(quote: Character, in substring: inout Substring, values: [Strin
             let key = try parseKey(in: &substring)
             guard substring.first == "}" else { throw ParseError.unterminatedVariable }
             substring.removeFirst()
-            guard let variableValue = values[key] else { throw ParseError.unknownKey(key) }
+            guard let variableValue = values[key] else { throw ParseError.unknownVariable(key) }
             output.append(contentsOf: variableValue)
             continue
         }
@@ -312,7 +312,7 @@ func parseUnquotedValue(in substring: inout Substring, values: [String: String])
             let key = try parseKey(in: &substring)
             guard substring.first == "}" else { throw ParseError.unterminatedVariable }
             substring.removeFirst()
-            guard let variableValue = values[key] else { throw ParseError.unknownKey(key) }
+            guard let variableValue = values[key] else { throw ParseError.unknownVariable(key) }
             collect(variableValue)
             continue
         }
