@@ -52,11 +52,17 @@ public func formatError(source: String, error: ParseError, errorLocation: String
 
     enum State {
         case errorNotFound(ErrorNotFound)
+        case onLineWithError(OnLineWithError)
         case errorIndicatorAdded(ErrorIndicatorAdded)
         case lineAfterErrorIndicatorAdded(LineAfterErrorIndicatorAdded)
 
         struct ErrorNotFound {
             var lineStart: String.Index
+        }
+
+        struct OnLineWithError {
+            var lineStart: String.Index
+            var column: Int
         }
 
         struct ErrorIndicatorAdded {
@@ -89,6 +95,18 @@ public func formatError(source: String, error: ParseError, errorLocation: String
                 }
 
                 lineCounter += 1
+            } else if index == errorLocation {
+                let column = source.distance(from: substate.lineStart, to: index)
+                state = .onLineWithError(.init(lineStart: substate.lineStart, column: column))
+            }
+
+        case let .onLineWithError(substate):
+            if char == "\n" {
+                lines.append(formattedLineNumber + source[substate.lineStart ... index])
+                lines.append(makeErrorLine(errorAt: substate.column)[...])
+                let lineStart = source.index(after: index)
+                state = .errorIndicatorAdded(.init(lineStart: lineStart, line: lineCounter))
+                lineCounter += 1
             }
 
         case let .errorIndicatorAdded(substate):
@@ -117,6 +135,13 @@ public func formatError(source: String, error: ParseError, errorLocation: String
             lines.append(makeErrorLine(errorAt: distance)[...])
             errorLine = lineCounter
         }
+
+    case let .onLineWithError(substate):
+        let lastLine = source.suffix(from: substate.lineStart)
+        lines.append(formattedLineNumber + lastLine + "\n")
+        let distance = lastLine.distance(from: lastLine.startIndex, to: errorLocation)
+        lines.append(makeErrorLine(errorAt: distance)[...])
+        errorLine = lineCounter
 
     case let .errorIndicatorAdded(substate):
         lines.append(formattedLineNumber + source[substate.lineStart ..< source.endIndex] + "\n")

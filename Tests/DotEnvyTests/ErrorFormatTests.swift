@@ -115,4 +115,31 @@ final class ErrorFormatTests: XCTestCase {
             )
         }
     }
+
+    func testInvalidEscapeSequence() throws {
+        let source = #"""
+        POP=BANG
+        FOO1=Bar
+        FLARP=hello \q world
+        FOO2=Bar
+        FOO3=Bar
+        """#
+        do {
+            _ = try parse(string: source)
+            XCTFail()
+        } catch let error as ParseErrorWithLocation {
+            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            XCTAssertEqual(
+                formatted,
+                #"""
+                   2: FOO1=Bar
+                   3: FLARP=hello \q world
+                                    ^
+                   4: FOO2=Bar
+
+                Error on line 3: Invalid escape sequence
+                """#
+            )
+        }
+    }
 }
