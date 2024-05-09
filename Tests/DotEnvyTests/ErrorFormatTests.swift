@@ -142,4 +142,29 @@ final class ErrorFormatTests: XCTestCase {
             )
         }
     }
+
+    func testUnexpectedEOF() throws {
+        let source = #"""
+        POP=BANG
+        FOO1=Bar
+        FLARP=${
+        """#
+        do {
+            _ = try parse(string: source)
+            XCTFail()
+        } catch let error as ParseErrorWithLocation {
+            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            XCTAssertEqual(
+                formatted,
+                #"""
+                   1: POP=BANG
+                   2: FOO1=Bar
+                   3: FLARP=${
+                              ^
+
+                Error on line 3: Unexpected end of data
+                """#
+            )
+        }
+    }
 }
