@@ -57,6 +57,16 @@ final class DotEnvyTests: XCTestCase {
         XCTAssertEqual(values, ["FOO": "BAR"])
     }
 
+    func testSpaceBeforeUnquotedValue() throws {
+        let values = try parse(string: "FOO=   BAR")
+        XCTAssertEqual(values, ["FOO": "BAR"])
+    }
+
+    func testSpaceAfterUnquotedValue() throws {
+        let values = try parse(string: "FOO=BAR   ")
+        XCTAssertEqual(values, ["FOO": "BAR"])
+    }
+
     func testDoubleQuotedValue() throws {
         let values = try parse(string: #"FOO="BAR""#)
         XCTAssertEqual(values, ["FOO": "BAR"])
@@ -106,5 +116,16 @@ final class DotEnvyTests: XCTestCase {
         K4='v4'
         """#)
         XCTAssertEqual(values, ["K1": "v1", "K2": "v2", "K3": "v3\nv3 line 2", "K4": "v4"])
+    }
+
+    func testCommentsAfterLines() throws {
+        let values = try parse(string: #"""
+        K1=v1
+        K2=v2 # comment
+        K3="v3 # not comment
+        v3 line 2" # comment
+        K4='v4'
+        """#)
+        XCTAssertEqual(values, ["K1": "v1", "K2": "v2", "K3": "v3 # not comment\nv3 line 2", "K4": "v4"])
     }
 }
