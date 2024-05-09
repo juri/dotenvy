@@ -209,4 +209,25 @@ final class ErrorFormatTests: XCTestCase {
             )
         }
     }
+
+    func testUnterminatedQuote() throws {
+        let source = #"""
+        KEY="VALUE
+        """#
+        do {
+            _ = try parse(string: source)
+            XCTFail()
+        } catch let error as ParseErrorWithLocation {
+            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            XCTAssertEqual(
+                formatted,
+                #"""
+                   1: KEY="VALUE
+                                ^
+
+                Error on line 1: Unterminated quote
+                """#
+            )
+        }
+    }
 }

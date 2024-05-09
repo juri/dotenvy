@@ -173,6 +173,7 @@ public enum ParseError: Error {
     case missingEquals
     case unexpectedEnd
     case unknownVariable(String)
+    case unterminatedQuote
     case unterminatedVariable
 }
 
@@ -184,6 +185,7 @@ extension ParseError: CustomStringConvertible {
         case .missingEquals: "Missing equals sign"
         case .unexpectedEnd: "Unexpected end of data"
         case let .unknownVariable(key): #"Unknown variable: "\#(key)""#
+        case .unterminatedQuote: "Unterminated quote"
         case .unterminatedVariable: "Unterminated variable"
         }
     }
@@ -241,6 +243,7 @@ func skipEquals(in substring: inout Substring) throws {
 func parseQuoted(quote: Character, in substring: inout Substring, values: [String: String]) throws -> String {
     var output = [Character]()
     var escaped = false
+    var last: Character?
     while !substring.isEmpty, case let first = substring.removeFirst() {
         if escaped {
             switch first {
@@ -269,10 +272,14 @@ func parseQuoted(quote: Character, in substring: inout Substring, values: [Strin
             output.append(contentsOf: variableValue)
             continue
         }
+        last = first
         if first == quote {
             break
         }
         output.append(first)
+    }
+    guard last == quote else {
+        throw ParseError.unterminatedQuote
     }
     return String(output)
 }
