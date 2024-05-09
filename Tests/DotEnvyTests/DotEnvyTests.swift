@@ -118,6 +118,17 @@ final class DotEnvyTests: XCTestCase {
         XCTAssertEqual(values, ["K1": "v1", "K2": "v2", "K3": "v3\nv3 line 2", "K4": "v4"])
     }
 
+    func testMultilineSingleQuoted() throws {
+        let values = try parse(string: #"""
+        K1=v1
+        K2=v2
+        K3='v3
+        v3 "line 2'
+        K4='v4'
+        """#)
+        XCTAssertEqual(values, ["K1": "v1", "K2": "v2", "K3": "v3\nv3 \"line 2", "K4": "v4"])
+    }
+
     func testCommentsAfterLines() throws {
         let values = try parse(string: #"""
         K1=v1
