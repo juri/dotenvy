@@ -26,7 +26,7 @@ func parse(substring: inout Substring) throws -> [String: String] {
         case "#":
             skipLine(in: &substring)
         default:
-            let (key, value) = try parseKeyValue(in: &substring)
+            let (key, value) = try parseKeyValue(in: &substring, values: values)
             values[key] = value
         }
     }
@@ -39,6 +39,8 @@ enum ParseError: Error {
     case invalidKeyStart
     case missingEquals
     case unexpectedEOF
+    case unknownKey(String)
+    case unterminatedVariable
 }
 
 struct ParseErrorWithLocation: Error {
@@ -46,7 +48,7 @@ struct ParseErrorWithLocation: Error {
     var location: String.Index
 }
 
-func parseKeyValue(in substring: inout Substring) throws -> (String, String) {
+func parseKeyValue(in substring: inout Substring, values: [String: String]) throws -> (String, String) {
     let key = try parseKey(in: &substring)
     skipSpace(in: &substring)
     try skipEquals(in: &substring)
@@ -60,7 +62,7 @@ func parseKeyValue(in substring: inout Substring) throws -> (String, String) {
         let value = try parseQuoted(quote: first, in: &substring)
         return (key, value)
     default:
-        let value = try parseUnquotedValue(in: &substring)
+        let value = try parseUnquotedValue(in: &substring, values: values)
         return (key, value)
     }
 }
@@ -119,7 +121,7 @@ func parseQuoted(quote: Character, in substring: inout Substring) throws -> Stri
     return String(output)
 }
 
-func parseUnquotedValue(in substring: inout Substring) throws -> String {
+func parseUnquotedValue(in substring: inout Substring, values: [String: String]) throws -> String {
     var output = [Character]()
     var escaped = false
     var space = [Character]()
@@ -130,6 +132,12 @@ func parseUnquotedValue(in substring: inout Substring) throws -> String {
         output.append(c)
     }
 
+    func collect(_ s: String) {
+        output.append(contentsOf: space)
+        space.removeAll(keepingCapacity: true)
+        output.append(contentsOf: s)
+    }
+
     while !substring.isEmpty, case let first = substring.removeFirst() {
         if escaped {
             switch first {
@@ -138,6 +146,7 @@ func parseUnquotedValue(in substring: inout Substring) throws -> String {
             case "'": collect(first)
             case "t": collect("\t")
             case "r": collect("\r")
+            case "$": collect(first)
             case "#": collect(first)
             default: throw ParseError.invalidEscapeSequence
             }
@@ -151,6 +160,15 @@ func parseUnquotedValue(in substring: inout Substring) throws -> String {
         if first == "#" {
             skipLine(in: &substring)
             break
+        }
+        if first == "$" && substring.first == "{" {
+            substring.removeFirst()
+            let key = try parseKey(in: &substring)
+            guard substring.first == "}" else { throw ParseError.unterminatedVariable }
+            substring.removeFirst()
+            guard let variableValue = values[key] else { throw ParseError.unknownKey(key) }
+            collect(variableValue)
+            continue
         }
         if first == "\n" {
             break
