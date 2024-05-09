@@ -94,4 +94,25 @@ final class ErrorFormatTests: XCTestCase {
             )
         }
     }
+
+    func testInvalidKeyStartOnlyLine() throws {
+        let source = """
+        0POP=BANG
+        """
+        do {
+            _ = try parse(string: source)
+            XCTFail()
+        } catch let error as ParseErrorWithLocation {
+            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            XCTAssertEqual(
+                formatted,
+                """
+                   1: 0POP=BANG
+                      ^
+
+                Error on line 1: Invalid start for a key: "0"
+                """
+            )
+        }
+    }
 }
