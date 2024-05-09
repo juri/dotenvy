@@ -31,10 +31,11 @@ string"
 DotEnvy has helpful error reporting on syntax errors.
 
 ```swift
+let source = #"""
+KEY="VALUE
+"""#
 do {
-    try parse(string: #"""
-    KEY="VALUE
-    """#)
+    _ = try parse(string: source)
 } catch let error as ParseErrorWithLocation {
     let formatted = formatError(source: source, error: error)
     print(formatted)
