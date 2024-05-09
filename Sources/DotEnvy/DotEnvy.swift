@@ -161,7 +161,7 @@ public enum ParseError: Error {
     case invalidEscapeSequence
     case invalidKeyStart(Character)
     case missingEquals
-    case unexpectedEOF
+    case unexpectedEnd
     case unknownKey(String)
     case unterminatedVariable
 }
@@ -172,7 +172,7 @@ extension ParseError: CustomStringConvertible {
         case .invalidEscapeSequence: "Invalid escape sequence"
         case let .invalidKeyStart(start): #"Invalid start for a key: "\#(start)""#
         case .missingEquals: "Missing equals sign"
-        case .unexpectedEOF: "Unexpected end of file"
+        case .unexpectedEnd: "Unexpected end of data"
         case let .unknownKey(key): #"Unknown key: "\#(key)""#
         case .unterminatedVariable: "Unterminated variable"
         }
@@ -204,7 +204,7 @@ func parseKeyValue(in substring: inout Substring, values: [String: String]) thro
 }
 
 func parseKey(in substring: inout Substring) throws -> String {
-    guard let first = substring.first else { throw ParseError.unexpectedEOF }
+    guard let first = substring.first else { throw ParseError.unexpectedEnd }
     guard isKeyStart(first) else { throw ParseError.invalidKeyStart(first) }
     let tail = substring.dropFirst().prefix(while: isKeyTail)
     substring.removeFirst(tail.count + 1)
