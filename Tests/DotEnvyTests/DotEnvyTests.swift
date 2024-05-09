@@ -107,6 +107,16 @@ final class DotEnvyTests: XCTestCase {
         XCTAssertEqual(values, ["K1": "v1", "K2": "v2", "K3": "v3", "K4": "v4"])
     }
 
+    func testMultiplePairsEmoji() throws {
+        let values = try parse(string: #"""
+        K1=v1
+        K2=v2
+        K3="👩🏽‍🤝‍👨🏿"
+        K4='v4'
+        """#)
+        XCTAssertEqual(values, ["K1": "v1", "K2": "v2", "K3": "👩🏽‍🤝‍👨🏿", "K4": "v4"])
+    }
+
     func testMultiline() throws {
         let values = try parse(string: #"""
         K1=v1
