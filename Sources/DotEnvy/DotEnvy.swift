@@ -40,6 +40,11 @@ public func parse(substring: inout Substring) throws -> [String: String] {
     return values
 }
 
+/// Format `error` that occurred when parsing `source`.
+public func formatError(source: String, error: ParseErrorWithLocation) -> String {
+    return formatError(source: source, error: error.error, errorLocation: error.location)
+}
+
 /// Format `error` that occurred on `errorLocation` when parsing `source`.
 public func formatError(source: String, error: ParseError, errorLocation: String.Index) -> String {
     var lines = [Substring]()

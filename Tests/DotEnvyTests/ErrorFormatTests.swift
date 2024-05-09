@@ -218,7 +218,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            let formatted = formatError(source: source, error: error)
             XCTAssertEqual(
                 formatted,
                 #"""
