@@ -25,3 +25,27 @@ KEY5=unquoted value referring to ${KEY4}
 KEY6="multiline
 string"
 ```
+
+## Error reporting
+
+DotEnvy has helpful error reporting on syntax errors.
+
+```swift
+do {
+    try parse(string: #"""
+    KEY="VALUE
+    """#)
+} catch let error as ParseErrorWithLocation {
+    let formatted = formatError(source: source, error: error)
+    print(formatted)
+}
+```
+
+outputs
+
+```
+   1: KEY="VALUE
+                ^
+
+Error on line 1: Unterminated quote
+```
