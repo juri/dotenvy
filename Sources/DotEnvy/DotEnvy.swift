@@ -1,6 +1,6 @@
 import Foundation
 
-func parse(string: String) throws -> [String: String] {
+public func parse(string: String) throws -> [String: String] {
     var sub = string[...]
     do {
         let values = try parse(substring: &sub)
@@ -10,7 +10,7 @@ func parse(string: String) throws -> [String: String] {
     }
 }
 
-func parse(substring: inout Substring) throws -> [String: String] {
+public func parse(substring: inout Substring) throws -> [String: String] {
     var values = [String: String]()
 
     while !substring.isEmpty {
@@ -31,7 +31,7 @@ func parse(substring: inout Substring) throws -> [String: String] {
     return values
 }
 
-func formatError(source: String, error: ParseError, errorLocation: String.Index) -> String {
+public func formatError(source: String, error: ParseError, errorLocation: String.Index) -> String {
     var lines = [Substring]()
     var lineCounter = 1
     let paddedLineNumberLength = 4
@@ -128,7 +128,7 @@ func formatError(source: String, error: ParseError, errorLocation: String.Index)
     """
 }
 
-enum ParseError: Error {
+public enum ParseError: Error {
     case invalidEscapeSequence
     case invalidKeyStart(Character)
     case missingEquals
@@ -138,7 +138,7 @@ enum ParseError: Error {
 }
 
 extension ParseError: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         switch self {
         case .invalidEscapeSequence: "Invalid escape sequence"
         case let .invalidKeyStart(start): #"Invalid start for a key "\#(start)""#
@@ -150,9 +150,9 @@ extension ParseError: CustomStringConvertible {
     }
 }
 
-struct ParseErrorWithLocation: Error {
-    var error: ParseError
-    var location: String.Index
+public struct ParseErrorWithLocation: Error {
+    public var error: ParseError
+    public var location: String.Index
 }
 
 func parseKeyValue(in substring: inout Substring, values: [String: String]) throws -> (String, String) {
