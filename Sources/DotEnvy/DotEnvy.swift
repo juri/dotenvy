@@ -59,7 +59,7 @@ func parseKeyValue(in substring: inout Substring, values: [String: String]) thro
         return (key, "")
     case #"""#, "'":
         substring.removeFirst()
-        let value = try parseQuoted(quote: first, in: &substring)
+        let value = try parseQuoted(quote: first, in: &substring, values: values)
         return (key, value)
     default:
         let value = try parseUnquotedValue(in: &substring, values: values)
@@ -92,7 +92,7 @@ func skipEquals(in substring: inout Substring) throws {
     substring.removeFirst()
 }
 
-func parseQuoted(quote: Character, in substring: inout Substring) throws -> String {
+func parseQuoted(quote: Character, in substring: inout Substring, values: [String: String]) throws -> String {
     var output = [Character]()
     var escaped = false
     while !substring.isEmpty, case let first = substring.removeFirst() {
@@ -104,6 +104,7 @@ func parseQuoted(quote: Character, in substring: inout Substring) throws -> Stri
             case "'": output.append(first)
             case "t": output.append("\t")
             case "r": output.append("\r")
+            case "$": output.append(first)
             default: throw ParseError.invalidEscapeSequence
             }
             escaped = false
@@ -111,6 +112,15 @@ func parseQuoted(quote: Character, in substring: inout Substring) throws -> Stri
         }
         if first == #"\"# {
             escaped = true
+            continue
+        }
+        if first == "$" && substring.first == "{" {
+            substring.removeFirst()
+            let key = try parseKey(in: &substring)
+            guard substring.first == "}" else { throw ParseError.unterminatedVariable }
+            substring.removeFirst()
+            guard let variableValue = values[key] else { throw ParseError.unknownKey(key) }
+            output.append(contentsOf: variableValue)
             continue
         }
         if first == quote {
