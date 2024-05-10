@@ -249,15 +249,16 @@ func parseQuoted(quote: Character, in substring: inout Substring, values: [Strin
     var output = [Character]()
     var escaped = false
     var last: Character?
+    let escapeSequences = quote == #"""#
     while !substring.isEmpty, case let first = substring.removeFirst() {
         if escaped {
             switch first {
             case #"\"#: output.append(first)
-            case "n": output.append("\n")
+            case "n": output.append(contentsOf: escapeSequences ? "\n" : #"\n"#)
             case quote: output.append(first)
             case "'": output.append(first)
-            case "t": output.append("\t")
-            case "r": output.append("\r")
+            case "t": output.append(contentsOf: escapeSequences ? "\t" : #"\t"#)
+            case "r": output.append(contentsOf: escapeSequences ? "\r" : #"\r"#)
             case "$": output.append(first)
             default: throw ParseError.invalidEscapeSequence
             }
@@ -310,10 +311,10 @@ func parseUnquotedValue(in substring: inout Substring, values: [String: String])
         if escaped {
             switch first {
             case #"\"#: collect(first)
-            case "n": collect("\n")
+            case "n": collect("\\n")
             case "'": collect(first)
-            case "t": collect("\t")
-            case "r": collect("\r")
+            case "t": collect("\\t")
+            case "r": collect("\\r")
             case "$": collect(first)
             case "#": collect(first)
             default: throw ParseError.invalidEscapeSequence

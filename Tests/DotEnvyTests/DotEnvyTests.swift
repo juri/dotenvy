@@ -97,6 +97,17 @@ final class DotEnvyTests: XCTestCase {
         XCTAssertEqual(values, ["FOO": "{\"key\": \"value\"}"])
     }
 
+    func testEscapeSequences() throws {
+        let values = try parse(string: #"""
+        DOUBLE="d1\n2"
+        SINGLE='s1\n2'
+        UNQUOTED=u1\n2
+        """#)
+        XCTAssertEqual(values["DOUBLE"], "d1\n2")
+        XCTAssertEqual(values["SINGLE"], #"s1\n2"#)
+        XCTAssertEqual(values["UNQUOTED"], #"u1\n2"#)
+    }
+
     func testMultiplePairs() throws {
         let values = try parse(string: #"""
         K1=v1
