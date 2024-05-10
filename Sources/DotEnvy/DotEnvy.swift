@@ -172,6 +172,13 @@ public func formatError(source: String, error: ParseError, errorLocation: String
     """
 }
 
+/// Errors that occur during parsing.
+///
+/// `ParseError` does not include information about the error location. That information
+/// can be derived from the location where the parsed substring was left at by ``parse(substring:)``.
+///
+/// - SeeAlso: If you call ``parse(string:)``, the thrown error is ``ParseErrorWithLocation`` which does
+///            include the location information.
 public enum ParseError: Error {
     case invalidEscapeSequence
     case invalidKeyStart(Character)
@@ -196,6 +203,7 @@ extension ParseError: CustomStringConvertible {
     }
 }
 
+/// Encapsulates a ``ParseError`` along with location in the original input.
 public struct ParseErrorWithLocation: Error {
     public var error: ParseError
     public var location: String.Index
