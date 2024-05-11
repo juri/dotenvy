@@ -100,8 +100,12 @@ extension DotEnvironment {
 }
 
 extension DotEnvironment {
+    /// DotEnvironment loading failures.
     public enum Failure: Error, Equatable {
+        /// The data at URL could not be decoded as UTF-8.
         case dataDecodingError(URL)
+
+        /// A parsing error occurred parsing the String.
         case parseError(ParseErrorWithLocation, String)
     }
 }
