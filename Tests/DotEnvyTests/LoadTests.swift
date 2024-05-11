@@ -94,9 +94,9 @@ final class LoadTests: XCTestCase {
 
 private func inTemporaryDirectory(_ closure: (URL) throws -> Void) throws {
     let url = URL(
-        filePath: UUID().uuidString,
-        directoryHint: .isDirectory,
-        relativeTo: URL(filePath: NSTemporaryDirectory(), directoryHint: .isDirectory)
+        fileURLWithPath: UUID().uuidString,
+        isDirectory: true,
+        relativeTo: URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
     ).absoluteURL
     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
     defer {
