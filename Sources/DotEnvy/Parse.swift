@@ -1,43 +1,45 @@
 import Foundation
 
-/// Parse dotenv formatted string.
-///
-/// - Throws: `ParseErrorWithLocation`
-public func parse(string: String) throws -> [String: String] {
-    var sub = string[...]
-    do {
-        let values = try parse(substring: &sub)
-        return values
-    } catch let error as ParseError {
-        throw ParseErrorWithLocation(error: error, location: sub.startIndex)
-    }
-}
-
-/// Parse dotenv formatted substring.
-///
-/// `substring.startIndex` is moved while the parsing happens. If the method throws,
-/// `startIndex` is where the error occurred.
-///
-/// - Throws: `ParseError`
-public func parse(substring: inout Substring) throws -> [String: String] {
-    var values = [String: String]()
-
-    while !substring.isEmpty {
-        skipSpace(in: &substring)
-        guard let first = substring.first else { break }
-        switch first {
-        case "\n":
-            substring.removeFirst()
-            continue
-        case "#":
-            skipLine(in: &substring)
-        default:
-            let (key, value) = try parseKeyValue(in: &substring, values: values)
-            values[key] = value
+extension DotEnvironment {
+    /// Parse dotenv formatted string.
+    ///
+    /// - Throws: `ParseErrorWithLocation`
+    static func parse(string: String) throws -> [String: String] {
+        var sub = string[...]
+        do {
+            let values = try Self.parse(substring: &sub)
+            return values
+        } catch let error as ParseError {
+            throw ParseErrorWithLocation(error: error, location: sub.startIndex)
         }
     }
 
-    return values
+    /// Parse dotenv formatted substring.
+    ///
+    /// `substring.startIndex` is moved while the parsing happens. If the method throws,
+    /// `startIndex` is where the error occurred.
+    ///
+    /// - Throws: `ParseError`
+    static func parse(substring: inout Substring) throws -> [String: String] {
+        var values = [String: String]()
+
+        while !substring.isEmpty {
+            skipSpace(in: &substring)
+            guard let first = substring.first else { break }
+            switch first {
+            case "\n":
+                substring.removeFirst()
+                continue
+            case "#":
+                skipLine(in: &substring)
+            default:
+                let (key, value) = try parseKeyValue(in: &substring, values: values)
+                values[key] = value
+            }
+        }
+
+        return values
+    }
 }
 
 /// Errors that occur during parsing.

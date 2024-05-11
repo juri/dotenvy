@@ -7,7 +7,7 @@ final class ErrorFormatTests: XCTestCase {
         ASDF
         """
         do {
-            _ = try parse(string: source)
+            _ = try DotEnvironment.parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
             let formatted = error.formatError(source: source)
@@ -29,7 +29,7 @@ final class ErrorFormatTests: XCTestCase {
         ZAP=1
         """
         do {
-            _ = try parse(string: source)
+            _ = try DotEnvironment.parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
             let formatted = error.formatError(source: source)
@@ -52,7 +52,7 @@ final class ErrorFormatTests: XCTestCase {
         ASDF
         """
         do {
-            _ = try parse(string: source)
+            _ = try DotEnvironment.parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
             let formatted = error.formatError(source: source)
@@ -77,7 +77,7 @@ final class ErrorFormatTests: XCTestCase {
         SQUEAK=2
         """
         do {
-            _ = try parse(string: source)
+            _ = try DotEnvironment.parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
             let formatted = error.formatError(source: source)
@@ -100,7 +100,7 @@ final class ErrorFormatTests: XCTestCase {
         0POP=BANG
         """
         do {
-            _ = try parse(string: source)
+            _ = try DotEnvironment.parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
             let formatted = error.formatError(source: source)
@@ -125,7 +125,7 @@ final class ErrorFormatTests: XCTestCase {
         FOO3=Bar
         """#
         do {
-            _ = try parse(string: source)
+            _ = try DotEnvironment.parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
             let formatted = error.formatError(source: source)
@@ -150,7 +150,7 @@ final class ErrorFormatTests: XCTestCase {
         FLARP=${
         """#
         do {
-            _ = try parse(string: source)
+            _ = try DotEnvironment.parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
             let formatted = error.formatError(source: source)
@@ -173,7 +173,7 @@ final class ErrorFormatTests: XCTestCase {
         FLARP=${UNKNOWN}
         """#
         do {
-            _ = try parse(string: source)
+            _ = try DotEnvironment.parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
             let formatted = error.formatError(source: source)
@@ -194,7 +194,7 @@ final class ErrorFormatTests: XCTestCase {
         FLARP=${UNKNOWN
         """#
         do {
-            _ = try parse(string: source)
+            _ = try DotEnvironment.parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
             let formatted = error.formatError(source: source)
@@ -215,7 +215,7 @@ final class ErrorFormatTests: XCTestCase {
         KEY="VALUE
         """#
         do {
-            _ = try parse(string: source)
+            _ = try DotEnvironment.parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
             let formatted = error.formatError(source: source)

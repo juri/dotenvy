@@ -41,7 +41,7 @@ let source = #"""
 KEY="VALUE
 """#
 do {
-    _ = try parse(string: source)
+    _ = try DotEnvironment.parse(string: source)
 } catch let error as ParseErrorWithLocation {
     let formatted = error.formatError(source: source)
     print(formatted)

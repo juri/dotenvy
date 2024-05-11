@@ -3,102 +3,102 @@ import XCTest
 
 final class DotEnvyTests: XCTestCase {
     func testEmptyString() throws {
-        let values = try parse(string: "")
+        let values = try DotEnvironment.parse(string: "")
         XCTAssertEqual(values, [:])
     }
 
     func testSpacesOnly() throws {
-        let values = try parse(string: "  \t")
+        let values = try DotEnvironment.parse(string: "  \t")
         XCTAssertEqual(values, [:])
     }
 
     func testSpacesAndNewlinesOnly() throws {
-        let values = try parse(string: "\n  \n\n\t \n \t\n")
+        let values = try DotEnvironment.parse(string: "\n  \n\n\t \n \t\n")
         XCTAssertEqual(values, [:])
     }
 
     func testCommentsOnly() throws {
-        let values = try parse(string: "\n  \n# Hello\n\t # Wörld\n \t\n")
+        let values = try DotEnvironment.parse(string: "\n  \n# Hello\n\t # Wörld\n \t\n")
         XCTAssertEqual(values, [:])
     }
 
     func testKeyOnly() throws {
-        let values = try parse(string: "FOO=")
+        let values = try DotEnvironment.parse(string: "FOO=")
         XCTAssertEqual(values, ["FOO": ""])
     }
 
     func testLeadingSpace() throws {
-        let values = try parse(string: "   FOO=")
+        let values = try DotEnvironment.parse(string: "   FOO=")
         XCTAssertEqual(values, ["FOO": ""])
     }
 
     func testSpaceAfterKey() throws {
-        let values = try parse(string: "   FOO =")
+        let values = try DotEnvironment.parse(string: "   FOO =")
         XCTAssertEqual(values, ["FOO": ""])
     }
 
     func testSpaceAfterEquals() throws {
-        let values = try parse(string: "   FOO =  ")
+        let values = try DotEnvironment.parse(string: "   FOO =  ")
         XCTAssertEqual(values, ["FOO": ""])
     }
 
     func testTrailingComment() throws {
-        let values = try parse(string: "   FOO =  # Nothing here")
+        let values = try DotEnvironment.parse(string: "   FOO =  # Nothing here")
         XCTAssertEqual(values, ["FOO": ""])
     }
 
     func testKeyCharacters() throws {
-        let values = try parse(string: "Fpo123_O9abO=")
+        let values = try DotEnvironment.parse(string: "Fpo123_O9abO=")
         XCTAssertEqual(values, ["Fpo123_O9abO": ""])
     }
 
     func testUnquotedValue() throws {
-        let values = try parse(string: "FOO=BAR")
+        let values = try DotEnvironment.parse(string: "FOO=BAR")
         XCTAssertEqual(values, ["FOO": "BAR"])
     }
 
     func testSpaceBeforeUnquotedValue() throws {
-        let values = try parse(string: "FOO=   BAR")
+        let values = try DotEnvironment.parse(string: "FOO=   BAR")
         XCTAssertEqual(values, ["FOO": "BAR"])
     }
 
     func testSpaceAfterUnquotedValue() throws {
-        let values = try parse(string: "FOO=BAR   ")
+        let values = try DotEnvironment.parse(string: "FOO=BAR   ")
         XCTAssertEqual(values, ["FOO": "BAR"])
     }
 
     func testDoubleQuotedValue() throws {
-        let values = try parse(string: #"FOO="BAR""#)
+        let values = try DotEnvironment.parse(string: #"FOO="BAR""#)
         XCTAssertEqual(values, ["FOO": "BAR"])
     }
 
     func testSingleQuotedValue() throws {
-        let values = try parse(string: "FOO='BAR'")
+        let values = try DotEnvironment.parse(string: "FOO='BAR'")
         XCTAssertEqual(values, ["FOO": "BAR"])
     }
 
     func testEscapedNewlineInQuotes() throws {
-        let values = try parse(string: #"FOO="B\nAR""#)
+        let values = try DotEnvironment.parse(string: #"FOO="B\nAR""#)
         XCTAssertEqual(values, ["FOO": "B\nAR"])
     }
 
     func testEscapedTabInQuotes() throws {
-        let values = try parse(string: #"FOO="B\tAR""#)
+        let values = try DotEnvironment.parse(string: #"FOO="B\tAR""#)
         XCTAssertEqual(values, ["FOO": "B\tAR"])
     }
 
     func testEscapedQuoteInQuotes() throws {
-        let values = try parse(string: #"FOO="B\"AR""#)
+        let values = try DotEnvironment.parse(string: #"FOO="B\"AR""#)
         XCTAssertEqual(values, ["FOO": "B\"AR"])
     }
 
     func testQuotesInUnquoted() throws {
-        let values = try parse(string: #"FOO={"key": "value"}"#)
+        let values = try DotEnvironment.parse(string: #"FOO={"key": "value"}"#)
         XCTAssertEqual(values, ["FOO": "{\"key\": \"value\"}"])
     }
 
     func testEscapeSequences() throws {
-        let values = try parse(string: #"""
+        let values = try DotEnvironment.parse(string: #"""
         DOUBLE="d1\n2"
         SINGLE='s1\n2'
         UNQUOTED=u1\n2
@@ -109,7 +109,7 @@ final class DotEnvyTests: XCTestCase {
     }
 
     func testMultiplePairs() throws {
-        let values = try parse(string: #"""
+        let values = try DotEnvironment.parse(string: #"""
         K1=v1
         K2=v2
         K3="v3"
@@ -119,7 +119,7 @@ final class DotEnvyTests: XCTestCase {
     }
 
     func testMultiplePairsEmoji() throws {
-        let values = try parse(string: #"""
+        let values = try DotEnvironment.parse(string: #"""
         K1=v1
         K2=v2
         K3="👩🏽‍🤝‍👨🏿"
@@ -129,7 +129,7 @@ final class DotEnvyTests: XCTestCase {
     }
 
     func testMultiline() throws {
-        let values = try parse(string: #"""
+        let values = try DotEnvironment.parse(string: #"""
         K1=v1
         K2=v2
         K3="v3
@@ -140,7 +140,7 @@ final class DotEnvyTests: XCTestCase {
     }
 
     func testMultilineSingleQuoted() throws {
-        let values = try parse(string: #"""
+        let values = try DotEnvironment.parse(string: #"""
         K1=v1
         K2=v2
         K3='v3
@@ -151,7 +151,7 @@ final class DotEnvyTests: XCTestCase {
     }
 
     func testCommentsAfterLines() throws {
-        let values = try parse(string: #"""
+        let values = try DotEnvironment.parse(string: #"""
         K1=v1
         K2=v2 # comment
         K3="v3 # not comment
@@ -162,7 +162,7 @@ final class DotEnvyTests: XCTestCase {
     }
 
     func testVariableReplacementUnquoted() throws {
-        let values = try parse(string: #"""
+        let values = try DotEnvironment.parse(string: #"""
         K1=v1
         K2=${K1}v2
         K3=\${K1}v3
@@ -172,7 +172,7 @@ final class DotEnvyTests: XCTestCase {
     }
 
     func testVariableReplacementQuoted() throws {
-        let values = try parse(string: #"""
+        let values = try DotEnvironment.parse(string: #"""
         K1=v1
         K2="${K1}v2"
         K3="\${K1}v3"
@@ -182,7 +182,7 @@ final class DotEnvyTests: XCTestCase {
     }
 
     func testVariableReplacementRecursive() throws {
-        let values = try parse(string: #"""
+        let values = try DotEnvironment.parse(string: #"""
         K1=v1
         K2=${K1}v2
         K3=${K2}v3
