@@ -4,13 +4,14 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fjuri%2Fdotenvy%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/juri/dotenvy)
 
 DotEnvy is a dotenv file parser for Swift. It allows you to load values from an `.env` file, similar to the libraries
-for [node.js], [Python], [Ruby], etc.
+for [node.js], [Python], [Ruby], [Rust] (I accidentally used the same name they use; apologies!) etc.
 
 DotEnvy supports multiline strings and variable substitution.
 
 [node.js]: https://github.com/motdotla/dotenv
 [Python]: https://pypi.org/project/python-dotenv/
 [Ruby]: https://github.com/bkeepers/dotenv
+[Rust]: https://docs.rs/dotenvy/latest/dotenvy/
 
 ## Supported format
 
