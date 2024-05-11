@@ -1,0 +1,25 @@
+name: SwiftFormat
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/swiftformat.yml'
+      - '.swiftformat'
+      - '**/*.swift'
+
+jobs:
+  SwiftFormat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Swift
+        uses: swift-actions/setup-swift@v2.0.0
+        with:
+          swift-version: "5.10"
+
+      - name: Set up Mint
+        uses: irgaly/setup-mint@v1.4.0
+
+      - name: Run SwiftFormat with Mint
+        run: mint run swiftformat . --lint
