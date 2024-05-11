@@ -3,7 +3,7 @@ import Foundation
 extension DotEnvironment {
     /// Parse dotenv formatted string.
     ///
-    /// - Throws: `ParseErrorWithLocation`
+    /// - Throws: ``ParseErrorWithLocation``
     public static func parse(string: String) throws -> [String: String] {
         var sub = string[...]
         do {
@@ -19,7 +19,7 @@ extension DotEnvironment {
     /// `substring.startIndex` is moved while the parsing happens. If the method throws,
     /// `startIndex` is where the error occurred.
     ///
-    /// - Throws: `ParseError`
+    /// - Throws: ``ParseError``
     public static func parse(substring: inout Substring) throws -> [String: String] {
         var values = [String: String]()
 
