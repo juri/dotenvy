@@ -4,7 +4,7 @@ extension DotEnvironment {
     /// Parse dotenv formatted string.
     ///
     /// - Throws: `ParseErrorWithLocation`
-    static func parse(string: String) throws -> [String: String] {
+    public static func parse(string: String) throws -> [String: String] {
         var sub = string[...]
         do {
             let values = try Self.parse(substring: &sub)
@@ -20,7 +20,7 @@ extension DotEnvironment {
     /// `startIndex` is where the error occurred.
     ///
     /// - Throws: `ParseError`
-    static func parse(substring: inout Substring) throws -> [String: String] {
+    public static func parse(substring: inout Substring) throws -> [String: String] {
         var values = [String: String]()
 
         while !substring.isEmpty {
