@@ -10,7 +10,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            let formatted = error.formatError(source: source)
             XCTAssertEqual(
                 formatted,
                 """
@@ -32,7 +32,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            let formatted = error.formatError(source: source)
             XCTAssertEqual(
                 formatted,
                 """
@@ -55,7 +55,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            let formatted = error.formatError(source: source)
             XCTAssertEqual(
                 formatted,
                 """
@@ -80,7 +80,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            let formatted = error.formatError(source: source)
             XCTAssertEqual(
                 formatted,
                 """
@@ -103,7 +103,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            let formatted = error.formatError(source: source)
             XCTAssertEqual(
                 formatted,
                 """
@@ -128,7 +128,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            let formatted = error.formatError(source: source)
             XCTAssertEqual(
                 formatted,
                 #"""
@@ -153,7 +153,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            let formatted = error.formatError(source: source)
             XCTAssertEqual(
                 formatted,
                 #"""
@@ -176,7 +176,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            let formatted = error.formatError(source: source)
             XCTAssertEqual(
                 formatted,
                 #"""
@@ -197,7 +197,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error.error, errorLocation: error.location)
+            let formatted = error.formatError(source: source)
             XCTAssertEqual(
                 formatted,
                 #"""
@@ -218,7 +218,7 @@ final class ErrorFormatTests: XCTestCase {
             _ = try parse(string: source)
             XCTFail()
         } catch let error as ParseErrorWithLocation {
-            let formatted = formatError(source: source, error: error)
+            let formatted = error.formatError(source: source)
             XCTAssertEqual(
                 formatted,
                 #"""

@@ -43,7 +43,7 @@ KEY="VALUE
 do {
     _ = try parse(string: source)
 } catch let error as ParseErrorWithLocation {
-    let formatted = formatError(source: source, error: error)
+    let formatted = error.formatError(source: source)
     print(formatted)
 }
 ```
