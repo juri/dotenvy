@@ -48,7 +48,11 @@ extension DotEnvironment.Override {
 extension DotEnvironment {
     /// Load the contents of a dotenv file into a dictionary.
     ///
-    /// Defaults to loading `.env` from the current working directory.
+    /// Defaults to loading `.env` from the current working directory. If the file does not exist, an
+    /// empty dictionary is returned.
+    ///
+    /// - Throws: ``LoadError`` if the file could not be decoded or parsed. If there's some other error
+    ///           when opening the file, they are passed through.
     public static func loadValues(
         url: URL = Self.defaultURL
     ) throws -> [String: String] {
@@ -59,13 +63,13 @@ extension DotEnvironment {
             return [:]
         }
         guard let str = String(data: data, encoding: .utf8) else {
-            throw Failure.dataDecodingError(url.absoluteURL)
+            throw LoadError.dataDecodingError(url.absoluteURL)
         }
         do {
             let keyValues = try parse(string: str)
             return keyValues
         } catch let error as ParseErrorWithLocation {
-            throw Failure.parseError(error, str)
+            throw LoadError.parseError(error, str)
         } catch {
             fatalError("Unexpected error: \(error)")
         }
@@ -99,18 +103,16 @@ extension DotEnvironment {
     }
 }
 
-extension DotEnvironment {
-    /// DotEnvironment loading failures.
-    public enum Failure: Error, Equatable {
-        /// The data at URL could not be decoded as UTF-8.
-        case dataDecodingError(URL)
+/// DotEnvironment loading failures.
+public enum LoadError: Error, Equatable {
+    /// The data at URL could not be decoded as UTF-8.
+    case dataDecodingError(URL)
 
-        /// A parsing error occurred parsing the String.
-        case parseError(ParseErrorWithLocation, String)
-    }
+    /// A parsing error occurred parsing the String.
+    case parseError(ParseErrorWithLocation, String)
 }
 
-extension DotEnvironment.Failure: CustomStringConvertible {
+extension LoadError: CustomStringConvertible {
     public var description: String {
         switch self {
         case let .dataDecodingError(url):
