@@ -1,7 +1,15 @@
 import Foundation
 
+/// `DotEnvironment` encapsulates a dictionary and possible overrides.
+///
+/// The usual configuration for dotenv files is that you'd load the contents of the file
+/// into ``environment`` and the process environment variables into ``overrides``.
+/// You can also do more elaborate setups, such as multiple levels of `.env` files.
 public struct DotEnvironment {
+    /// The variables loaded into this environment.
     public var environment: [String: String]
+
+    /// Override values.
     public var overrides: Override = .none
 
     public subscript(_ key: String) -> String? {
@@ -16,12 +24,14 @@ public struct DotEnvironment {
         return self.environment[key]
     }
 
+    /// A `DotEnvironment` that represents the process environment.
     public static var process: DotEnvironment {
         DotEnvironment(environment: ProcessInfo.processInfo.environment)
     }
 }
 
 extension DotEnvironment {
+    /// Override values for a `DotEnvironment`.
     public indirect enum Override {
         case some(DotEnvironment)
         case none
@@ -29,12 +39,16 @@ extension DotEnvironment {
 }
 
 extension DotEnvironment.Override {
+    /// A `DotEnvironment.Override` that represents the process environment.
     public static var process: DotEnvironment.Override {
         .some(.process)
     }
 }
 
 extension DotEnvironment {
+    /// Load the contents of a dotenv file into a dictionary.
+    ///
+    /// Defaults to loading `.env` from the current working directory.
     public static func loadValues(
         url: URL = Self.defaultURL
     ) throws -> [String: String] {
@@ -57,6 +71,10 @@ extension DotEnvironment {
         }
     }
 
+    /// Create a `DotEnvironment` from `url` and `overrides`.
+    ///
+    /// Defaults to loading `.env` from the current working directory and using the process environment
+    /// variables as the overrides.
     public static func make(
         url: URL = Self.defaultURL,
         overrides: DotEnvironment.Override = .process
@@ -65,6 +83,7 @@ extension DotEnvironment {
         return DotEnvironment(environment: values, overrides: overrides)
     }
 
+    /// Merge, or flatten, a `DotEnvironment` into a single dictionary.
     public func merge() -> [String: String] {
         switch self.overrides {
         case let .some(e):
