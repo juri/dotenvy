@@ -179,7 +179,7 @@ public func formatError(source: String, error: ParseError, errorLocation: String
 ///
 /// - SeeAlso: If you call ``parse(string:)``, the thrown error is ``ParseErrorWithLocation`` which does
 ///            include the location information.
-public enum ParseError: Error {
+public enum ParseError: Error, Equatable {
     case invalidEscapeSequence
     case invalidKeyStart(Character)
     case missingEquals
@@ -204,7 +204,7 @@ extension ParseError: CustomStringConvertible {
 }
 
 /// Encapsulates a ``ParseError`` along with location in the original input.
-public struct ParseErrorWithLocation: Error {
+public struct ParseErrorWithLocation: Error, Equatable {
     public var error: ParseError
     public var location: String.Index
 }
