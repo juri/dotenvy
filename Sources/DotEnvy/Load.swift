@@ -109,3 +109,14 @@ extension DotEnvironment {
         case parseError(ParseErrorWithLocation, String)
     }
 }
+
+extension DotEnvironment.Failure: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case let .dataDecodingError(url):
+            "Error decoding data at \(url)"
+        case let .parseError(parseErrorWithLocation, source):
+            parseErrorWithLocation.formatError(source: source)
+        }
+    }
+}
