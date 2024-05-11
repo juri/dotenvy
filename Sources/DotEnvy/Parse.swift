@@ -45,9 +45,9 @@ extension DotEnvironment {
 /// Errors that occur during parsing.
 ///
 /// `ParseError` does not include information about the error location. That information
-/// can be derived from the location where the parsed substring was left at by ``parse(substring:)``.
+/// can be derived from the location where the parsed substring was left at by ``DotEnvironment/parse(substring:)``.
 ///
-/// - SeeAlso: If you call ``parse(string:)``, the thrown error is ``ParseErrorWithLocation`` which does
+/// - SeeAlso: If you call ``DotEnvironment/parse(string:)``, the thrown error is ``ParseErrorWithLocation`` which does
 ///            include the location information.
 public enum ParseError: Error, Equatable {
     case invalidEscapeSequence
