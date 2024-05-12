@@ -108,6 +108,11 @@ final class DotEnvyTests: XCTestCase {
         XCTAssertEqual(values["UNQUOTED"], #"u1\n\'\t\r#2"#)
     }
 
+    func testEscapedDoubleQuote() throws {
+        let values = try DotEnvironment.parse(string: #"FOO=\"bar"#)
+        XCTAssertEqual(values["FOO"], #""bar"#)
+    }
+
     func testMultiplePairs() throws {
         let values = try DotEnvironment.parse(string: #"""
         K1=v1
