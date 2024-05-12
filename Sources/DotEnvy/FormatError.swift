@@ -106,10 +106,6 @@ extension ParseError {
             if errorLocation == source.endIndex {
                 lines.append(makeErrorLine(errorAt: lastLine.count)[...])
                 errorLine = lineCounter
-            } else if errorLocation >= substate.lineStart && errorLocation < source.endIndex {
-                let distance = lastLine.distance(from: lastLine.startIndex, to: errorLocation)
-                lines.append(makeErrorLine(errorAt: distance)[...])
-                errorLine = lineCounter
             }
 
         case let .onLineWithError(substate):
