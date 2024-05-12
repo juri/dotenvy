@@ -16,11 +16,11 @@ struct Check: ParsableCommand {
         = CommandConfiguration(
             abstract: "Check syntax of input.",
             discussion: """
-            In case of a syntax error, the error is printed to standard error and the command exits
-            with failure code \(ExitCode.failure.rawValue).
+            In case of a syntax error, the error is printed to standard error
+            and the command exits with failure code \(ExitCode.failure.rawValue).
 
-            If there are no problems reading the input, nothing is printed and the command exits
-            with \(ExitCode.success.rawValue).
+            If there are no problems reading the input, nothing is printed
+            and the command exits with \(ExitCode.success.rawValue).
             """
         )
 
