@@ -2,6 +2,7 @@
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fjuri%2Fdotenvy%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/juri/dotenvy)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fjuri%2Fdotenvy%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/juri/dotenvy)
+![Swift build status](https://github.com/juri/dotenvy/actions/workflows/build.yml/badge.svg)
 
 DotEnvy is a dotenv file parser for Swift. It allows you to load values from an `.env` file, similar to the libraries
 for [node.js], [Python], [Ruby], [Rust][Rust][^1] etc.
