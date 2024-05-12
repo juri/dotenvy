@@ -15,6 +15,12 @@ DotEnvy supports multiline strings and variable substitution.
 [Ruby]: https://github.com/bkeepers/dotenv
 [Rust]: https://docs.rs/dotenvy/latest/dotenvy/
 
+## Documentation
+
+For more detailed syntax examples and API documentation visit DotEnvy's [documentation] on Swift Package Index.
+
+[documentation]: https://swiftpackageindex.com/juri/dotenvy/documentation/dotenvy
+
 ## Supported format
 
 The dotenv format does not have a specification, but this library supports the common features. The syntax
