@@ -27,6 +27,14 @@ final class DotEnvyTests: XCTestCase {
         XCTAssertEqual(values, ["FOO": ""])
     }
 
+    func testKeyOnlyWithNewline() throws {
+        let values = try DotEnvironment.parse(string: """
+        FOO=
+
+        """)
+        XCTAssertEqual(values, ["FOO": ""])
+    }
+
     func testLeadingSpace() throws {
         let values = try DotEnvironment.parse(string: "   FOO=")
         XCTAssertEqual(values, ["FOO": ""])
