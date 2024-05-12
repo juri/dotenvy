@@ -196,4 +196,43 @@ final class DotEnvyTests: XCTestCase {
         """#)
         XCTAssertEqual(values, ["K1": "v1", "K2": "v1v2", "K3": "v1v2v3", "K4": "v4", "K5": "v1v2v3"])
     }
+
+    func testThrowsInvalidEscapeSequence() throws {
+        let source = #"""
+        FOO="bad \q escape"
+        """#
+        XCTAssertThrowsError(try DotEnvironment.parse(string: source)) { error in
+            guard let error = error as? ParseErrorWithLocation else {
+                XCTFail()
+                return
+            }
+            XCTAssertEqual(error.error, ParseError.invalidEscapeSequence)
+        }
+    }
+
+    func testThrowsUnterminatedVariable() throws {
+        let source = #"""
+        FOO="unterminated ${VARIABLE"
+        """#
+        XCTAssertThrowsError(try DotEnvironment.parse(string: source)) { error in
+            guard let error = error as? ParseErrorWithLocation else {
+                XCTFail()
+                return
+            }
+            XCTAssertEqual(error.error, ParseError.unterminatedVariable)
+        }
+    }
+
+    func testThrowsUnknownVariable() throws {
+        let source = #"""
+        FOO="unknown ${VARIABLE}"
+        """#
+        XCTAssertThrowsError(try DotEnvironment.parse(string: source)) { error in
+            guard let error = error as? ParseErrorWithLocation else {
+                XCTFail()
+                return
+            }
+            XCTAssertEqual(error.error, ParseError.unknownVariable("VARIABLE"))
+        }
+    }
 }
