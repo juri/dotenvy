@@ -16,7 +16,7 @@ struct Check: ParsableCommand {
         = CommandConfiguration(
             abstract: "Check syntax of input.",
             discussion: """
-            In case of a syntax error, the error is printed out and the command exits
+            In case of a syntax error, the error is printed to standard error and the command exits
             with failure code \(ExitCode.failure.rawValue).
 
             If there are no problems reading the input, nothing is printed and the command exits
@@ -36,7 +36,8 @@ struct Check: ParsableCommand {
         do {
             _ = try DotEnvironment.parse(string: string)
         } catch let error as ParseErrorWithLocation {
-            print(error.formatError(source: string))
+            FileHandle.standardError.write(Data(error.formatError(source: string).utf8))
+            FileHandle.standardError.write(Data("\n".utf8))
             throw ExitCode.failure
         }
     }
