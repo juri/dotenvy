@@ -61,6 +61,8 @@ extension DotEnvironment {
             data = try Data(contentsOf: url)
         } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileReadNoSuchFileError {
             return [:]
+        } catch let error as NSError where error.domain == NSPOSIXErrorDomain && error.code == ENOENT {
+            return [:]
         }
         guard let str = String(data: data, encoding: .utf8) else {
             throw LoadError.dataDecodingError(url.absoluteURL)
