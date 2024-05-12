@@ -98,14 +98,14 @@ final class DotEnvyTests: XCTestCase {
     }
 
     func testEscapeSequences() throws {
-        let values = try DotEnvironment.parse(string: #"""
-        DOUBLE="d1\n2"
-        SINGLE='s1\n2'
-        UNQUOTED=u1\n2
-        """#)
-        XCTAssertEqual(values["DOUBLE"], "d1\n2")
-        XCTAssertEqual(values["SINGLE"], #"s1\n2"#)
-        XCTAssertEqual(values["UNQUOTED"], #"u1\n2"#)
+        let values = try DotEnvironment.parse(string: ##"""
+        DOUBLE="d1\n\"\'\\\t\r2"
+        SINGLE='s1\n\t\r2'
+        UNQUOTED=u1\n\\\'\t\r\#2
+        """##)
+        XCTAssertEqual(values["DOUBLE"], "d1\n\"\'\\\t\r2")
+        XCTAssertEqual(values["SINGLE"], #"s1\n\t\r2"#)
+        XCTAssertEqual(values["UNQUOTED"], #"u1\n\'\t\r#2"#)
     }
 
     func testMultiplePairs() throws {
