@@ -13,6 +13,52 @@ final class LoadTests: XCTestCase {
         }
     }
 
+    func testLoadMissingDefaultFile() throws {
+        try inTemporaryDirectory { tempDir in
+            FileManager.default.changeCurrentDirectoryPath(tempDir.path)
+            let values = try DotEnvironment.loadValues()
+            XCTAssertEqual(values, [:])
+        }
+    }
+
+    func testBadEncoding() throws {
+        try inTemporaryDirectory { tempDir in
+            let fileURL = tempDir.appendingPathComponent(".env", isDirectory: false)
+            try """
+            KEY=äölk
+            """.data(using: .utf16)!.write(to: fileURL)
+            FileManager.default.changeCurrentDirectoryPath(tempDir.path)
+            XCTAssertThrowsError(try DotEnvironment.loadValues()) { error in
+                guard let error = error as? LoadError else {
+                    XCTFail()
+                    return
+                }
+                XCTAssertEqual(error, .dataDecodingError(DotEnvironment.defaultURL.absoluteURL))
+                XCTAssertEqual(String(describing: error), "Error decoding data at \(DotEnvironment.defaultURL.absoluteURL)")
+            }
+        }
+    }
+
+    func testParseError() throws {
+        try inTemporaryDirectory { tempDir in
+            try Data("""
+            KEY='
+            """.utf8).write(to: tempDir.appendingPathComponent(".env", isDirectory: false))
+            FileManager.default.changeCurrentDirectoryPath(tempDir.path)
+            XCTAssertThrowsError(try DotEnvironment.loadValues()) { error in
+                guard let error = error as? LoadError else {
+                    XCTFail("Unexpected error: \(error)")
+                    return
+                }
+                guard case let .parseError(p, _) = error else {
+                    XCTFail("Unexpected LoadError: \(error)")
+                    return
+                }
+                XCTAssertEqual(p.error, .unterminatedQuote)
+            }
+        }
+    }
+
     func testMakeDotEnvironmentWithDefaultFile() throws {
         try inTemporaryDirectory { tempDir in
             try Data("""
