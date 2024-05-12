@@ -29,9 +29,28 @@ KEY=value
 Keys must start with an ASCII letter or underscore, and must consist of of ASCII letters, numbers and underscores. It's
 customary to use all-caps, but DotEnvy does not enforce that.
 
-Values can be unquoted, single quoted (surrounded by `'` symbols) or double quoted (surrounded by `"` symbols). 
+Values can be unquoted, single quoted (surrounded by `'` symbols) or double quoted (surrounded by `"` symbols). All
+the keys in this example have the same value:
+
+```sh
+KEY1=value
+KEY2='value'
+KEY3="value"
+```
+
 An unquoted value ends at newline; quoted values may be multiline. Some escape sequences are supported in
 double quoted strings (`\n`, `\r`, `\t`); in single quoted and unquoted strings escape sequences go unprocessed.
+
+```sh
+MULTILINE="foo
+bar"
+DOUBLE="foo\nbar"
+SINGLE='foo\nbar'
+UNQUOTED=foo\nbar
+```
+
+Here `MULTILINE` and `DOUBLE` have a newline in them. `SINGLE` and `UNQUOTED` have the character sequence
+`\n`.
 
 There's support for variable substitution using the following syntax:
 
