@@ -50,12 +50,25 @@ extension DotEnvironment {
 /// - SeeAlso: If you call ``DotEnvironment/parse(string:)``, the thrown error is ``ParseErrorWithLocation`` which does
 ///            include the location information.
 public enum ParseError: Error, Equatable {
+    /// An unrecognized escape sequence was encountered.
     case invalidEscapeSequence
+
+    /// Key started with a disallowed character.
     case invalidKeyStart(Character)
+
+    /// Equals sign was not found.
     case missingEquals
+
+    /// Unexpected end of data was encountered.
     case unexpectedEnd
+
+    /// Reference to an unknown variable was encountered.
     case unknownVariable(String)
+
+    /// Quoted value was not terminated.
     case unterminatedQuote
+
+    /// Variable reference was not terminated.
     case unterminatedVariable
 }
 
@@ -75,7 +88,10 @@ extension ParseError: CustomStringConvertible {
 
 /// Encapsulates a ``ParseError`` along with location in the original input.
 public struct ParseErrorWithLocation: Error, Equatable {
+    /// The ``ParseError`` that caused the error.
     public var error: ParseError
+
+    /// The location in the input string where the error occurred.
     public var location: String.Index
 }
 
