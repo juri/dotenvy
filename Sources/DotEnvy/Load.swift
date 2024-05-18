@@ -77,6 +77,21 @@ extension DotEnvironment {
         }
     }
 
+    /// Create a `DotEnvironment` from `source` and `overrides`.
+    ///
+    /// - Parameter source: A string in dotenv format.
+    public static func make(
+        source: String,
+        overrides: DotEnvironment.Override = .process
+    ) throws -> DotEnvironment {
+        do {
+            let values = try self.parse(string: source)
+            return DotEnvironment(environment: values, overrides: overrides)
+        } catch let error as ParseErrorWithLocation {
+            throw LoadError.parseError(error, source)
+        }
+    }
+
     /// Create a `DotEnvironment` from `url` and `overrides`.
     ///
     /// Defaults to loading `.env` from the current working directory and using the process environment
