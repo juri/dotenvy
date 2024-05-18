@@ -80,6 +80,17 @@ func env() -> [String: String] {
 }
 ```
 
+If you want to override the process environment, you can use ``DotEnvironment/export(overwrite:)``:
+
+```swift
+import DotEnvy
+
+func overrideEnv() throws {
+    let environment = try DotEnvironment.make()
+    environment.export()
+}
+```
+
 ## Topics
 
 ### Group

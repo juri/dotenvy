@@ -59,6 +59,25 @@ final class LoadTests: XCTestCase {
         }
     }
 
+    func testLoadErrorFromMakeSource() throws {
+        let source = """
+        KEY1=VALUE1
+        KEY2-VALUE2
+        KEY3=VALUE3
+        """
+        XCTAssertThrowsError(try DotEnvironment.make(source: source)) { error in
+            guard let error = error as? LoadError else {
+                XCTFail("Unexpected error: \(error)")
+                return
+            }
+            guard case let .parseError(p, _) = error else {
+                XCTFail("Unexpected LoadError: \(error)")
+                return
+            }
+            XCTAssertEqual(p.error, .missingEquals)
+        }
+    }
+
     func testMakeDotEnvironmentWithDefaultFile() throws {
         try inTemporaryDirectory { tempDir in
             try Data("""

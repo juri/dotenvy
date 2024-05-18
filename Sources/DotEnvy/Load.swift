@@ -46,6 +46,16 @@ extension DotEnvironment.Override {
 }
 
 extension DotEnvironment {
+    /// Export the `DotEnvironment` values into the process environment.
+    ///
+    /// - Parameter overwrite: Indicates if the calculated value should overwrite any existing value
+    ///                        in the process environment.
+    public func export(overwrite: Bool = true) {
+        for value in self.merge() {
+            setenv(value.key, value.value, overwrite ? 1 : 0)
+        }
+    }
+
     /// Load the contents of a dotenv file into a dictionary.
     ///
     /// Defaults to loading `.env` from the current working directory. If the file does not exist, an
@@ -74,6 +84,21 @@ extension DotEnvironment {
             throw LoadError.parseError(error, str)
         } catch {
             fatalError("Unexpected error: \(error)")
+        }
+    }
+
+    /// Create a `DotEnvironment` from `source` and `overrides`.
+    ///
+    /// - Parameter source: A string in dotenv format.
+    public static func make(
+        source: String,
+        overrides: DotEnvironment.Override = .process
+    ) throws -> DotEnvironment {
+        do {
+            let values = try self.parse(string: source)
+            return DotEnvironment(environment: values, overrides: overrides)
+        } catch let error as ParseErrorWithLocation {
+            throw LoadError.parseError(error, source)
         }
     }
 
