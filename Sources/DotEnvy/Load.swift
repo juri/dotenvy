@@ -46,6 +46,16 @@ extension DotEnvironment.Override {
 }
 
 extension DotEnvironment {
+    /// Export the `DotEnvironment` values into the process environment.
+    ///
+    /// - Parameter overwrite: Indicates if the calculated value should overwrite any existing value
+    ///                        in the process environment.
+    public func export(overwrite: Bool = true) {
+        for value in self.merge() {
+            setenv(value.key, value.value, overwrite ? 1 : 0)
+        }
+    }
+
     /// Load the contents of a dotenv file into a dictionary.
     ///
     /// Defaults to loading `.env` from the current working directory. If the file does not exist, an
