@@ -24,22 +24,14 @@ struct Check: ParsableCommand {
             """
         )
 
-    @Argument(help: "Input file. Standard input is used if omitted")
-    var file: FileURL?
-
-    func validate() throws {
-        _ = try self.file?.url.checkResourceIsReachable()
-    }
+    @Option(
+        name: [.customShort("i"), .long],
+        help: "Input. Standard input is used with -. If omitted, try to use .env in cwd"
+    )
+    var input: Input?
 
     func run() throws {
-        let string = try readInput(self.file)
-        do {
-            _ = try DotEnvironment.parse(string: string)
-        } catch let error as ParseErrorWithLocation {
-            FileHandle.standardError.write(Data(error.formatError(source: string).utf8))
-            FileHandle.standardError.write(Data("\n".utf8))
-            throw ExitCode.failure
-        }
+        _ = try loadInput(self.input)
     }
 }
 
@@ -58,30 +50,37 @@ struct JSON: ParsableCommand {
             """
         )
 
-    @Argument(help: "Input file. Standard input is used if omitted")
-    var file: FileURL?
+    @Option(
+        name: [.customShort("i"), .long],
+        help: "Input. Standard input is used with -. If omitted, try to use .env in cwd"
+    )
+    var input: Input?
 
     @Flag(help: "Pretty print JSON")
     var pretty: Bool = false
 
-    func validate() throws {
-        _ = try self.file?.url.checkResourceIsReachable()
-    }
-
     func run() throws {
-        let string = try readInput(self.file)
-        do {
-            let values = try DotEnvironment.parse(string: string)
-            let json = try JSONSerialization.data(
-                withJSONObject: values,
-                options: self.pretty ? [.prettyPrinted, .sortedKeys] : []
-            )
-            FileHandle.standardOutput.write(json)
-            FileHandle.standardOutput.write(Data("\n".utf8))
-        } catch let error as ParseErrorWithLocation {
-            FileHandle.standardError.write(Data(error.formatError(source: string).utf8))
-            FileHandle.standardError.write(Data("\n".utf8))
-            throw ExitCode.failure
+        let values = try loadInput(self.input)
+        let json = try JSONSerialization.data(
+            withJSONObject: values,
+            options: self.pretty ? [.prettyPrinted, .sortedKeys] : []
+        )
+        FileHandle.standardOutput.write(json)
+        FileHandle.standardOutput.write(Data("\n".utf8))
+    }
+}
+
+enum Input: ExpressibleByArgument {
+    case stdin
+    case fileURL(FileURL)
+
+    init?(argument: String) {
+        if argument == "-" {
+            self = .stdin
+        } else if let fileURL = FileURL(argument: argument) {
+            self = .fileURL(fileURL)
+        } else {
+            return nil
         }
     }
 }
@@ -99,12 +98,34 @@ struct FileURL: ExpressibleByArgument {
     }
 }
 
-private func readInput(_ file: FileURL?) throws -> String {
-    let data: Data
-    if let file {
-        data = try Data(contentsOf: file.url)
+private func loadInput(_ input: Input?) throws -> [String: String] {
+    if let input = input {
+        let string = try readInput(input)
+        do {
+            return try DotEnvironment.parse(string: string)
+        } catch let error as ParseErrorWithLocation {
+            FileHandle.standardError.write(Data(error.formatError(source: string).utf8))
+            FileHandle.standardError.write(Data("\n".utf8))
+            throw ExitCode.failure
+        }
     } else {
+        do {
+            return try DotEnvironment.loadValues()
+        } catch let error as LoadError {
+            FileHandle.standardError.write(Data(error.description.utf8))
+            FileHandle.standardError.write(Data("\n".utf8))
+            throw ExitCode.failure
+        }
+    }
+}
+
+private func readInput(_ input: Input) throws -> String {
+    let data: Data
+    switch input {
+    case .stdin:
         data = FileHandle.standardInput.readDataToEndOfFile()
+    case let .fileURL(fileURL):
+        data = try Data(contentsOf: fileURL.url)
     }
     guard let string = String(data: data, encoding: .utf8) else {
         throw ValidationError("Input could not be decoded as UTF-8")
