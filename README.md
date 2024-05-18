@@ -63,3 +63,13 @@ outputs
 
 Error on line 1: Unterminated quote
 ```
+
+## Command Line
+
+There's also a command line tool, `dotenv-tool`. It supports checking dotenv files for syntax errors and converting
+them to JSON. To install, run:
+
+```sh
+swift build -c release
+cp .build/release/dotenv-tool /usr/local/bin
+```
